@@ -100,19 +100,21 @@ LEAP_HAND_RESET_POSE_PROFILES = {
 }
 
 LEAP_HAND_ACTUATOR_PROFILES = {
-    # Current baseline gains/limits.
+    # Allegro-aligned baseline used for initial Newton bring-up.
     "default": {
-        "stiffness": 3.0,
+        "stiffness": 1.0,
         "damping": 0.1,
         "effort_limit_sim": 0.5,
-        "friction": 0.01,
+        "friction": 1e-4,
+        "armature": 1e-4,
     },
-    # Capacity B: slightly stronger and better damped for contact-rich in-hand control.
+    # Capacity B: stronger but still critically damped-like for contact-rich control.
     "capacity_b": {
-        "stiffness": 5.0,
-        "damping": 0.2,
+        "stiffness": 1.5,
+        "damping": 0.15,
         "effort_limit_sim": 0.8,
-        "friction": 0.02,
+        "friction": 1e-4,
+        "armature": 1e-4,
     },
 }
 
@@ -167,6 +169,7 @@ def make_leap_hand_cfg(
                 damping=actuator["damping"],
                 effort_limit_sim=actuator["effort_limit_sim"],
                 friction=actuator["friction"],
+                armature=actuator["armature"],
             ),
         },
         soft_joint_pos_limit_factor=1.0,

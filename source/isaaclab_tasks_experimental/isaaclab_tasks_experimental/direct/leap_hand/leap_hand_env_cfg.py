@@ -46,8 +46,8 @@ class LeapHandEnvCfg(DirectRLEnvCfg):
         integrator="implicitfast",
         # LeapHand contact density is higher than Allegro under current colliders.
         # Keep solver buffers explicit to avoid narrowphase/nefc overflow cascades.
-        njmax=500,
-        nconmax=500,
+        njmax=2000,
+        nconmax=2000,
         impratio=10.0,
         cone="elliptic",
         update_data_interval=2,
@@ -139,7 +139,7 @@ class LeapHandEnvCfg(DirectRLEnvCfg):
     reset_position_noise = 0.01
     reset_object_rot_noise_scale_x = 1.0
     reset_object_rot_noise_scale_y = 1.0
-    reset_dof_pos_noise = 0.2
+    reset_dof_pos_noise = 0.05
     reset_dof_vel_noise = 0.0
     # reward scales
     dist_reward_scale = -10.0
@@ -148,7 +148,7 @@ class LeapHandEnvCfg(DirectRLEnvCfg):
     action_penalty_scale = -0.0002
     reach_goal_bonus = 250
     fall_penalty = 0
-    fall_dist = 0.24
+    fall_dist = 0.30
     vel_obs_scale = 0.2
     success_tolerance = 0.2
     max_consecutive_success = 0
