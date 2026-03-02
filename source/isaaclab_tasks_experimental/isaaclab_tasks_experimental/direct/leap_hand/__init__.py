@@ -15,11 +15,11 @@ from . import agents
 # Register Gym environments.
 ##
 
-inhand_task_entry = "isaaclab_tasks.direct.inhand_manipulation"
+inhand_task_entry = f"{__name__}.leap_inhand_warp_env"
 
 gym.register(
     id="Isaac-Repose-Cube-Leap-Direct-v0",
-    entry_point=f"{inhand_task_entry}.inhand_manipulation_env:InHandManipulationEnv",
+    entry_point=f"{inhand_task_entry}:LeapInHandManipulationWarpEnv",
     disable_env_checker=True,
     kwargs={
         "env_cfg_entry_point": f"{__name__}.leap_hand_env_cfg:LeapHandEnvCfg",

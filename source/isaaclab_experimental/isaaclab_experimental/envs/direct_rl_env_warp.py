@@ -311,6 +311,13 @@ class DirectRLEnvWarp(gym.Env):
         """The maximum episode length in steps adjusted from s."""
         return math.ceil(self.max_episode_length_s / (self.cfg.sim.dt * self.cfg.decimation))
 
+    def _sim_has_rtx_sensors(self) -> bool:
+        """Compatibility helper across SimulationContext variants."""
+        has_rtx_sensors_fn = getattr(self.sim, "has_rtx_sensors", None)
+        if callable(has_rtx_sensors_fn):
+            return bool(has_rtx_sensors_fn())
+        return False
+
     """
     Operations.
     """
@@ -343,10 +350,10 @@ class DirectRLEnvWarp(gym.Env):
         self.scene.write_data_to_sim()
 
         # if sensors are added to the scene, make sure we render to reflect changes in reset
-        if self.sim.has_rtx_sensors() and self.cfg.rerender_on_reset:
+        if self._sim_has_rtx_sensors() and self.cfg.rerender_on_reset:
             self.sim.render()
 
-        # if self.cfg.wait_for_textures and self.sim.has_rtx_sensors():
+        # if self.cfg.wait_for_textures and self._sim_has_rtx_sensors():
         #     while SimulationManager.assets_loading():
         #         self.sim.render()
 
@@ -392,7 +399,7 @@ class DirectRLEnvWarp(gym.Env):
 
         # check if we need to do rendering within the physics loop
         # note: checked here once to avoid multiple checks within the loop
-        is_rendering = bool(self.sim.settings.get("/isaaclab/visualizer")) or self.sim.has_rtx_sensors()
+        is_rendering = bool(self.sim.settings.get("/isaaclab/visualizer")) or self._sim_has_rtx_sensors()
 
         # perform physics stepping
         for _ in range(self.cfg.decimation):
@@ -457,7 +464,7 @@ class DirectRLEnvWarp(gym.Env):
         # update articulation kinematics
         self.scene.write_data_to_sim()
         # if sensors are added to the scene, make sure we render to reflect changes in reset
-        # if self.sim.has_rtx_sensors() and self.cfg.rerender_on_reset:
+        # if self._sim_has_rtx_sensors() and self.cfg.rerender_on_reset:
         #    self.sim.render()
 
         # TODO We could split it out.
@@ -518,7 +525,7 @@ class DirectRLEnvWarp(gym.Env):
         """
         # run a rendering step of the simulator
         # if we have rtx sensors, we do not need to render again sim
-        if not self.sim.has_rtx_sensors() and not recompute:
+        if not self._sim_has_rtx_sensors() and not recompute:
             self.sim.render()
         # decide the rendering mode
         if self.render_mode == "human" or self.render_mode is None:
@@ -677,7 +684,7 @@ class DirectRLEnvWarp(gym.Env):
             env_ids: List of environment ids which must be reset
         """
 
-        self.scene.reset(env_ids=None, mask=mask)
+        self.scene.reset(env_ids=None, env_mask=mask)
 
         # apply events such as randomization for environments that need a reset
         # if self.cfg.events:
